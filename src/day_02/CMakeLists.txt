@@ -31,3 +31,19 @@ target_link_libraries(
   ${CURRENT_PROJECT}_puzzle2
   CONAN_PKG::boost
 )
+
+add_library(
+  ${CURRENT_PROJECT}_shared
+  STATIC
+  shared.cpp
+)
+
+target_link_libraries(
+  ${CURRENT_PROJECT}_puzzle1
+  ${CURRENT_PROJECT}_shared
+)
+
+target_link_libraries(
+  ${CURRENT_PROJECT}_puzzle2
+  ${CURRENT_PROJECT}_shared
+)
