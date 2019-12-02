@@ -1,2 +1,5 @@
 [generators]
 cmake
+
+[requires]
+boost/1.67.0@vca/development
