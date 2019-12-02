@@ -26,3 +26,8 @@ target_link_libraries(
   ${CURRENT_PROJECT}_puzzle1
   CONAN_PKG::boost
 )
+
+target_link_libraries(
+  ${CURRENT_PROJECT}_puzzle2
+  CONAN_PKG::boost
+)
