@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cassert>
 #include <iostream>
 
 #include <boost/algorithm/string.hpp>
@@ -39,5 +40,7 @@ int main() {
   auto instructions = GetInstructions();
   ProcessInstructions(instructions);
   std::cout << instructions[0] << std::endl;
+  assert(instructions[0] == 3931283);
+
   return 0;
 }

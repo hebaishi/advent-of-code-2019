@@ -42,6 +42,7 @@ int main() {
       count++;
 
   std::cout << count << std::endl;
+  assert(count == 511);
 
   count = 0;
 
@@ -50,6 +51,7 @@ int main() {
       count++;
 
   std::cout << count << std::endl;
+  assert(count = 316);
 
   return 0;
 }

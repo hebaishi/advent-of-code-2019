@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cassert>
 #include <iostream>
 #include <array>
 
@@ -123,5 +124,6 @@ int main() {
   auto instructions = GetInstructions();
   ProcessInstructions(instructions);
   std::cout << instructions[0] << std::endl;
+  assert(instructions[0] == 314);
   return 0;
 }

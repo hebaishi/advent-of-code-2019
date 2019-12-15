@@ -2,6 +2,7 @@
 #include <functional>
 #include <fstream>
 #include <set>
+#include <cassert>
 
 #include <boost/algorithm/string.hpp>
 
@@ -114,7 +115,7 @@ int main() {
   for (const auto& intersection : intersections)
     result.insert(std::abs(intersection.getX()) + std::abs(intersection.getY()));
   std::cout << *result.begin() << std::endl;
-
+  assert(*result.begin() == 1626);
 
   std::set<size_t> distances;
   for (const auto& intersection : intersections) {
@@ -126,7 +127,7 @@ int main() {
   }
 
   std::cout << *distances.begin() << std::endl;
-
+  assert(*distances.begin() == 27330);
 
   return 0;
 }

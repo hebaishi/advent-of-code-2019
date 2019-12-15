@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cassert>
 #include <iostream>
 
 int main() {
@@ -16,5 +17,6 @@ int main() {
     }
   }
   std::cout << "total = " << total << std::endl;
+  assert(total == 4977473);
   return 0;
 }

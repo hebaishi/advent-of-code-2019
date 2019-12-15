@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cassert>
 #include <iostream>
 
 int main() {
@@ -10,5 +11,6 @@ int main() {
     total += static_cast<int>((current / 3) - 2);
   }
   std::cout << "total = " << total << std::endl;
+  assert(total == 3320226);
   return 0;
 }

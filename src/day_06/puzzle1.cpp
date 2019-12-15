@@ -1,4 +1,5 @@
 #include <string>
+#include <cassert>
 #include <iostream>
 #include <set>
 #include <map>
@@ -67,6 +68,7 @@ void ShortestDistanceToCommonAncestor(Orbits& orbits) {
   }
 
   std::cout << *distances.begin() << std::endl;
+  assert(*distances.begin() == 547);
 
 }
 
@@ -86,6 +88,7 @@ int main() {
     ProcessNode(planet, count, orbits);
 
   std::cout << count << std::endl;
+  assert(count == 301100);
 
   ShortestDistanceToCommonAncestor(orbits);
   return 0;

@@ -47,6 +47,7 @@ int main() {
       ReplaceInstructions(new_instructions, a, b);
       if (ProcessInstructions(new_instructions) == 19690720) {
         std::cout << ((a * 100) + b) << std::endl;
+        assert(((a * 100) + b) == 6979);
       }
     }
   }
