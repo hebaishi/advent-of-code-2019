@@ -1,3 +1,5 @@
+#include <catch/catch.hpp>
+
 #include <iostream>
 #include <functional>
 #include <fstream>
@@ -95,7 +97,7 @@ Path CreatePath(const std::string& line) {
   return path;
 }
 
-int main() {
+TEST_CASE( "Day 3 solution", "[day3]" ) {
   std::set<Point> path;
   std::string line;
   std::ifstream input_file(CURRENT_DIR "/input3.txt");
@@ -114,8 +116,7 @@ int main() {
   std::set<int> result;
   for (const auto& intersection : intersections)
     result.insert(std::abs(intersection.getX()) + std::abs(intersection.getY()));
-  std::cout << *result.begin() << std::endl;
-  assert(*result.begin() == 1626);
+  REQUIRE(*result.begin() == 1626);
 
   std::set<size_t> distances;
   for (const auto& intersection : intersections) {
@@ -126,9 +127,6 @@ int main() {
     distances.insert(distance);
   }
 
-  std::cout << *distances.begin() << std::endl;
-  assert(*distances.begin() == 27330);
-
-  return 0;
+  REQUIRE(*distances.begin() == 27330);
 }
 

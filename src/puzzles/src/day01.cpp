@@ -1,17 +1,10 @@
+#include <catch/catch.hpp>
+#include <io/io.hpp>
+
 #include <fstream>
 #include <vector>
 #include <cassert>
 #include <iostream>
-
-std::vector<int> GetValues() {
-  std::vector<int> output;
-  std::ifstream input_file(CURRENT_DIR "/input1.txt");
-  std::string line;
-  size_t total = 0;
-  while (std::getline(input_file, line))
-    output.push_back(std::stoi(line));
-  return output;
-}
 
 size_t CalculateTotal(const std::vector<int>& values, bool increase_accuracy = false) {
   size_t total = 0;
@@ -30,14 +23,12 @@ size_t CalculateTotal(const std::vector<int>& values, bool increase_accuracy = f
   return total;
 }
 
-int main() {
-  auto total = CalculateTotal(GetValues());
-  std::cout << "total = " << total << std::endl;
-  assert(total == 3320226);
+TEST_CASE( "Day 1 solution", "[day1]" ) {
+  auto input_data = io::ReadIntegers(CURRENT_DIR "/input1.txt");
 
-  total = CalculateTotal(GetValues(), true);
-  std::cout << "total = " << total << std::endl;
-  assert(total == 4977473);
+  auto total = CalculateTotal(input_data);
+  REQUIRE(total == 3320226);
 
-  return 0;
+  total = CalculateTotal(input_data, true);
+  REQUIRE(total == 4977473);
 }

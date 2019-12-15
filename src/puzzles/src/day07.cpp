@@ -1,3 +1,5 @@
+#include <catch/catch.hpp>
+
 #include <string>
 #include <cassert>
 #include <vector>
@@ -22,8 +24,7 @@ std::vector<std::string> GetCombinations() {
   return output;
 }
 
-int main() {
+TEST_CASE( "Day 7 solution", "[day7]" ) {
   auto combinations = GetCombinations();
-  assert(combinations.size() == 120);
-  return 0;
+  REQUIRE(combinations.size() == 120);
 }

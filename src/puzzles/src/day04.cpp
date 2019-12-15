@@ -1,3 +1,5 @@
+#include <catch/catch.hpp>
+
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -35,14 +37,13 @@ bool ContainsDoubleRepeat(size_t input) {
 }
 
 
-int main() {
+TEST_CASE( "Day 4 solution", "[day4]" ) {
   size_t count = 0;
   for (size_t value = 359282 ; value <= 820401 ; value++)
     if (IsPasswordValid(value))
       count++;
 
-  std::cout << count << std::endl;
-  assert(count == 511);
+  REQUIRE(count == 511);
 
   count = 0;
 
@@ -50,8 +51,6 @@ int main() {
     if (IsPasswordValid(value) && ContainsDoubleRepeat(value))
       count++;
 
-  std::cout << count << std::endl;
-  assert(count = 316);
+  REQUIRE(count == 316);
 
-  return 0;
 }

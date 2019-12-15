@@ -1,3 +1,7 @@
+#include <io/io.hpp>
+
+#include <catch/catch.hpp>
+
 #include <fstream>
 #include <cassert>
 #include <iostream>
@@ -9,18 +13,6 @@ enum class Mode {
   Position = 0,
   Immediate = 1
 };
-
-std::vector<int> GetInstructions() {
-  std::ifstream input_file(CURRENT_DIR "/input5.txt");
-  std::string input;
-  std::getline(input_file, input);
-  std::vector<std::string> tokens;
-  boost::algorithm::split(tokens, input, boost::is_any_of(","));
-  std::vector<int> instructions;
-  for (const auto& token : tokens)
-    instructions.push_back(std::stoi(token));
-  return instructions;
-}
 
 struct Instruction {
   int code;
@@ -50,7 +42,7 @@ std::pair<int, int> GetOperands(const std::vector<int> instructions, std::array<
   };
 }
 
-void ProcessInstructions(std::vector<int>& instructions) {
+void ProcessInstructions5(std::vector<int>& instructions) {
   size_t ip = 0;
   while (ip < instructions.size()) {
     auto instruction = ProcessOpcode(instructions[ip]);
@@ -58,8 +50,7 @@ void ProcessInstructions(std::vector<int>& instructions) {
       break;
 
     std::pair<int, int> operands;
-//    if (instruction.code == 1 || instruction.code == 2)
-      operands = GetOperands(instructions, instruction.modes, { instructions[ip+1], instructions[ip+2] });
+    operands = GetOperands(instructions, instruction.modes, { instructions[ip+1], instructions[ip+2] });
 
     switch (instruction.code) {
     case 1: {
@@ -120,10 +111,8 @@ void ProcessInstructions(std::vector<int>& instructions) {
   }
 }
 
-int main() {
-  auto instructions = GetInstructions();
-  ProcessInstructions(instructions);
-  std::cout << instructions[0] << std::endl;
-  assert(instructions[0] == 314);
-  return 0;
+TEST_CASE( "Day 5 solution", "[day5]" ) {
+  auto instructions = io::ReadInstructions(CURRENT_DIR "/input5.txt");
+  ProcessInstructions5(instructions);
+  REQUIRE(instructions[0] == 314);
 }

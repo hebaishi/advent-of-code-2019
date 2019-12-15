@@ -1,3 +1,5 @@
+#include <catch/catch.hpp>
+
 #include <fstream>
 #include <cassert>
 #include <iostream>
@@ -36,11 +38,8 @@ void ProcessInstructions(std::vector<int>& instructions) {
   }
 }
 
-int main() {
+TEST_CASE( "Day 2 solution part 1", "[day2]" ) {
   auto instructions = GetInstructions();
   ProcessInstructions(instructions);
-  std::cout << instructions[0] << std::endl;
-  assert(instructions[0] == 3931283);
-
-  return 0;
+  REQUIRE(instructions[0] == 3931283);
 }

@@ -1,3 +1,5 @@
+#include <catch/catch.hpp>
+
 #include <string>
 #include <cassert>
 #include <iostream>
@@ -67,12 +69,10 @@ void ShortestDistanceToCommonAncestor(Orbits& orbits) {
     distances.insert(current_distance);
   }
 
-  std::cout << *distances.begin() << std::endl;
-  assert(*distances.begin() == 547);
-
+  REQUIRE(*distances.begin() == 547);
 }
 
-int main() {
+TEST_CASE( "Day 6 solution", "[day6]" ) {
   auto orbits = ReadData();
   std::set<std::string> planets;
 
@@ -87,9 +87,7 @@ int main() {
   for (const auto& planet : planets)
     ProcessNode(planet, count, orbits);
 
-  std::cout << count << std::endl;
-  assert(count == 301100);
+  REQUIRE(count == 301100);
 
   ShortestDistanceToCommonAncestor(orbits);
-  return 0;
 }
