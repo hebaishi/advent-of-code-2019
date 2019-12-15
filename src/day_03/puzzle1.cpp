@@ -98,7 +98,7 @@ Path CreatePath(const std::string& line) {
 int main() {
   std::set<Point> path;
   std::string line;
-  std::ifstream input_file(CURRENT_DIR "/input.txt");
+  std::ifstream input_file(CURRENT_DIR "/input3.txt");
   std::vector<Path> paths;
   while(std::getline(input_file, line)) {
     paths.emplace_back(CreatePath(line));

@@ -11,7 +11,7 @@ enum class Mode {
 };
 
 std::vector<int> GetInstructions() {
-  std::ifstream input_file(CURRENT_DIR "/input.txt");
+  std::ifstream input_file(CURRENT_DIR "/input5.txt");
   std::string input;
   std::getline(input_file, input);
   std::vector<std::string> tokens;

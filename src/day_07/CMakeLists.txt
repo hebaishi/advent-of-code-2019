@@ -5,19 +5,8 @@ add_executable(
   puzzle1.cpp
 )
 
-add_executable(
-  ${CURRENT_PROJECT}_puzzle2
-  puzzle2.cpp
-)
-
 target_compile_definitions(
   ${CURRENT_PROJECT}_puzzle1
-  PRIVATE
-  -DCURRENT_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
-)
-
-target_compile_definitions(
-  ${CURRENT_PROJECT}_puzzle2
   PRIVATE
   -DCURRENT_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )

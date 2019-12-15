@@ -13,7 +13,7 @@ using Orbits = std::map<std::string, std::set<std::string>>;
 Orbits ReadData() {
   std::string line;
   Orbits orbits;
-  std::ifstream input_file(CURRENT_DIR "/input.txt");
+  std::ifstream input_file(CURRENT_DIR "/input6.txt");
   std::vector<std::string> tokens;
   while(std::getline(input_file, line)) {
     tokens.clear();

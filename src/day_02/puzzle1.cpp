@@ -5,7 +5,7 @@
 #include <boost/algorithm/string.hpp>
 
 std::vector<int> GetInstructions() {
-  std::ifstream input_file(CURRENT_DIR "/input.txt");
+  std::ifstream input_file(CURRENT_DIR "/input2.txt");
   std::string input;
   std::getline(input_file, input);
   std::vector<std::string> tokens;
