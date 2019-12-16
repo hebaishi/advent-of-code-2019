@@ -44,7 +44,7 @@ bool ProcessNodeUntil(const std::string& node, Orbits& orbits, std::vector<std::
   return false;
 }
 
-void ShortestDistanceToCommonAncestor(Orbits& orbits) {
+size_t ShortestDistanceToCommonAncestor(Orbits& orbits) {
   std::vector<std::string> parents_you;
   ProcessNodeUntil("YOU", orbits, parents_you);
 
@@ -69,7 +69,9 @@ void ShortestDistanceToCommonAncestor(Orbits& orbits) {
     distances.insert(current_distance);
   }
 
-  REQUIRE(*distances.begin() == 547);
+  assert(!distances.empty());
+
+  return *distances.begin();
 }
 
 TEST_CASE( "Day 6 solution", "[day6]" ) {
@@ -89,5 +91,5 @@ TEST_CASE( "Day 6 solution", "[day6]" ) {
 
   REQUIRE(count == 301100);
 
-  ShortestDistanceToCommonAncestor(orbits);
+  REQUIRE(ShortestDistanceToCommonAncestor(orbits) == 547);
 }

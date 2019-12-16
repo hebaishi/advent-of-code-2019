@@ -3,8 +3,7 @@ get_filename_component(CURRENT_PROJECT ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 add_executable(
   puzzles
   src/day01.cpp
-  src/day02_01.cpp
-  src/day02_02.cpp
+  src/day02.cpp
   src/day03.cpp
   src/day04.cpp
   src/day05.cpp
