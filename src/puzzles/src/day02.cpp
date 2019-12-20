@@ -9,7 +9,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-void ReplaceInstructions(std::vector<int>& instructions, int a, int b) {
+void ReplaceInstructions(std::vector<int64_t>& instructions, int64_t a, int64_t b) {
   instructions[1] = a;
   instructions[2] = b;
 }
@@ -22,8 +22,9 @@ TEST_CASE( "Day 2 solution, part 1", "[day2]" ) {
   auto instructions = GetInstructions();
   ReplaceInstructions(instructions, 12, 2);
   emulator::Intcode processor;
-  processor.ProcessInstructions(instructions);
-  REQUIRE(instructions[0] == 3931283);
+  processor.SetInstructions(instructions);
+  processor.Run();
+  REQUIRE(processor.GetInstructions()[0] == 3931283);
 }
 
 TEST_CASE( "Day 2 solution, part 2", "[day2]" ) {
@@ -34,8 +35,9 @@ TEST_CASE( "Day 2 solution, part 2", "[day2]" ) {
       auto current_instructions = original_instructions;
       emulator::Intcode processor;
       ReplaceInstructions(current_instructions, a, b);
-      processor.ProcessInstructions(current_instructions);
-      if (current_instructions[0] == 19690720)
+      processor.SetInstructions(current_instructions);
+      processor.Run();
+      if (processor.GetInstructions()[0] == 19690720)
         found = true;
     }
   }

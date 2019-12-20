@@ -16,13 +16,13 @@ std::vector<int> ReadIntegers(const std::string& path) {
   return output;
 }
 
-std::vector<int> ReadInstructions(const std::string& path) {
+std::vector<int64_t> ReadInstructions(const std::string& path) {
   std::ifstream input_file(path);
   std::string input;
   std::getline(input_file, input);
   std::vector<std::string> tokens;
   boost::algorithm::split(tokens, input, boost::is_any_of(","));
-  std::vector<int> instructions;
+  std::vector<int64_t> instructions;
   for (const auto& token : tokens)
     instructions.push_back(std::stoi(token));
   return instructions;

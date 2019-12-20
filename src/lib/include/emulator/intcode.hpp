@@ -6,24 +6,38 @@
 
 #include <memory>
 
+using InputCallback = std::function<int64_t()>;
+
+using OutputCallback = std::function<void(int64_t)>;
+
 namespace emulator {
+
+enum class State {
+  AwaitingInput,
+  ProvidedOutput,
+  Halted
+};
 
 class Intcode {
 public:
 
 Intcode();
 
-void SetInputs(const std::vector<int>& inputs);
+void SetInstructions(const std::vector<int64_t>& instructions);
 
-const std::vector<int>& GetOutputs();
+std::vector<int64_t> GetInstructions();
 
-void ProcessInstructions(std::vector<int>& instructions);
+State Run();
+
+void ProvideInput(int64_t value);
+
+int64_t GetOutput();
 
 ~Intcode();
 
 private:
 class Impl;
-std::unique_ptr<Impl> pimpl_;
+std::shared_ptr<Impl> pimpl_;
 
 };
 

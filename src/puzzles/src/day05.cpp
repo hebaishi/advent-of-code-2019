@@ -11,7 +11,10 @@
 TEST_CASE( "Day 5 solution", "[day5]" ) {
   auto instructions = io::ReadInstructions(CURRENT_DIR "/input5.txt");
   emulator::Intcode processor;
-  processor.SetInputs({5});
-  processor.ProcessInstructions(instructions);
-  REQUIRE(instructions[0] == 314);
+  processor.SetInstructions(instructions);
+  auto state = processor.Run();
+  REQUIRE(state == emulator::State::AwaitingInput);
+  processor.ProvideInput(5);
+  processor.Run();
+  REQUIRE(processor.GetInstructions()[0] == 314);
 }
