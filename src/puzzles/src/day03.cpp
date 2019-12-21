@@ -45,6 +45,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Point& p) {
     os << "{x=" << p.x_ << ",y=" << p.y_ << "}\n";
+    return os;
   }
 
   int getX() const { return x_; }
@@ -112,7 +113,7 @@ TEST_CASE( "Day 3 solution", "[day3]" ) {
   for (const auto& path : paths)
     points.push_back(Points(path.begin(), path.end()));
 
-  auto intersection_end = std::set_intersection(points[0].begin(), points[0].end(), points[1].begin(), points[1].end(), std::back_inserter(intersections));
+  std::set_intersection(points[0].begin(), points[0].end(), points[1].begin(), points[1].end(), std::back_inserter(intersections));
   std::set<int> result;
   for (const auto& intersection : intersections)
     result.insert(std::abs(intersection.getX()) + std::abs(intersection.getY()));

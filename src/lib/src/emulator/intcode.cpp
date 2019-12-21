@@ -66,7 +66,7 @@ private:
   std::map<int64_t, std::function<int(std::vector<int64_t>&, std::array<Mode, 3>, int64_t)>> operations_;
   std::vector<int64_t> instructions_;
   State current_state_;
-  int ip_;
+  size_t ip_;
   int64_t current_input_, current_output_;
   bool received_input_;
 };
@@ -159,7 +159,7 @@ void Intcode::Impl::RegisterInstructions() {
     return ip + 4;
   };
 
-  operations_[3] = [this](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+  operations_[3] = [this](std::vector<int64_t>& instructions, std::array<Mode, 3> /*modes*/, int64_t ip) -> int64_t {
     instructions[ instructions[ip+1] ] = current_input_;
     return ip + 2;
   };
