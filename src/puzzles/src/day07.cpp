@@ -50,13 +50,13 @@ TEST_CASE( "Day 7 solution part 1", "[day7]" ) {
       auto& current_amplifier = amplifiers[index];
       int phase_setting = combination[index] - '0';
       auto state = current_amplifier.Run();
-      assert(state == emulator::State::AwaitingInput);
+      REQUIRE(state == emulator::State::AwaitingInput);
       current_amplifier.ProvideInput(phase_setting);
       state = current_amplifier.Run();
-      assert(state == emulator::State::AwaitingInput);
+      REQUIRE(state == emulator::State::AwaitingInput);
       current_amplifier.ProvideInput(current_input);
       state = current_amplifier.Run();
-      assert(state == emulator::State::ProvidedOutput);
+      REQUIRE(state == emulator::State::ProvidedOutput);
       current_input = current_amplifier.GetOutput();
     }
     outputs.insert(current_input);
