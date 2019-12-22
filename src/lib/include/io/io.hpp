@@ -6,5 +6,7 @@
 namespace io {
 std::vector<int> ReadIntegers(const std::string& path);
 std::vector<int64_t> ReadInstructions(const std::string& path);
+std::string ReadLine(const std::string& path);
+
 }
 

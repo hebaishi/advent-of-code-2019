@@ -2,23 +2,16 @@
 
 #include <space/image.hpp>
 
+#include <io/io.hpp>
+
 #include <vector>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <algorithm>
 
-std::string ReadLine(const std::string& path) {
-  std::ifstream input_file(path);
-  std::string input;
-  std::getline(input_file, input);
-  return input;
-}
-
-
-
 TEST_CASE( "Day 8 solution part 1", "[day8]" ) {
-  auto input_data = ReadLine(CURRENT_DIR "/input8.txt");
+  auto input_data = io::ReadLine(CURRENT_DIR "/input8.txt");
   auto image = space::Image(input_data, 25, 6);
   int min_count = -1;
   size_t min_count_layer = -1;
@@ -41,7 +34,7 @@ TEST_CASE( "Day 8 solution part 1", "[day8]" ) {
 
 
 TEST_CASE( "Day 8 solution part 2", "[day8]" ) {
-  auto input_data = ReadLine(CURRENT_DIR "/input8.txt");
+  auto input_data = io::ReadLine(CURRENT_DIR "/input8.txt");
   auto image = space::Image(input_data, 25, 6);
 
 

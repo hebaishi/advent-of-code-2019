@@ -1,5 +1,6 @@
 #include <array>
 #include <iostream>
+#include <algorithm>
 #include <map>
 #include <functional>
 
@@ -13,7 +14,8 @@ constexpr const int64_t OutputOpcode = 4;
 
 enum class Mode {
   Position = 0,
-  Immediate = 1
+  Immediate = 1,
+  Relative = 2
 };
 
 struct Instruction {
@@ -21,10 +23,55 @@ struct Instruction {
   std::array<Mode, 3> modes;
 };
 
-static std::pair<int64_t, int64_t> GetOperands(const std::vector<int64_t> instructions, std::array<Mode, 3> modes, int64_t ip) {
+
+class Intcode::Impl {
+public:
+  Impl();
+
+  void SetInstructions(const std::vector<int64_t>& instructions);
+
+  void RegisterInstructions();
+
+  State Run();
+
+  void ProvideInput(int64_t value);
+
+  int64_t GetOutput();
+
+  std::vector<int64_t> GetInstructions();
+
+  std::pair<int64_t, int64_t> GetOperands(std::array<Mode, 3> modes, int64_t ip);
+
+  int64_t GetOperand(Mode mode, int64_t ip);
+
+  int64_t GetOffset(Mode mode);
+
+private:
+
+  std::map<int64_t, std::function<int(std::array<Mode, 3>, int64_t)>> operations_;
+  std::vector<int64_t> instructions_;
+  State current_state_;
+  size_t ip_, base_offset_;
+  int64_t current_input_, current_output_;
+  bool received_input_;
+};
+
+int64_t Intcode::Impl::GetOperand(Mode mode, int64_t ip) {
+  if (mode == Mode::Immediate) {
+    return instructions_[ip];
+  } else {
+    return instructions_[instructions_[ip] + GetOffset(mode)];
+  }
+}
+
+int64_t Intcode::Impl::GetOffset(Mode mode) {
+  return (mode == Mode::Relative) ? base_offset_ : 0;
+}
+
+std::pair<int64_t, int64_t> Intcode::Impl::GetOperands(std::array<Mode, 3> modes, int64_t ip) {
   return {
-    modes[0] == Mode::Immediate ? instructions[ip+1] : instructions[instructions[ip+1]],
-    modes[1] == Mode::Immediate ? instructions[ip+2] : instructions[instructions[ip+2]]
+    GetOperand(modes[0], ip+1),
+    GetOperand(modes[1], ip+2),
   };
 }
 
@@ -35,43 +82,12 @@ static Instruction ProcessOpcode(int code) {
   Instruction instruction;
   instruction.opcode = std::stoi(str.substr(3));
   instruction.modes = {Mode::Position, Mode::Position, Mode::Position};
-  for (int idx = 2 ; idx >= 0 ; idx--) {
-    if (str[idx] == '1') {
-      instruction.modes[2-idx] = Mode::Immediate;
-    }
-  }
+  for (int idx = 2 ; idx >= 0 ; idx--)
+    instruction.modes[2-idx] = static_cast<Mode>(str[idx] - '0');
   return instruction;
 }
 
-class Intcode::Impl {
-public:
-  Impl();
-
-  void SetInstructions(const std::vector<int64_t>& instructions);
-
-  void RegisterInstructions();
-
-  void ResetCounter();
-
-  State Run();
-
-  void ProvideInput(int64_t value);
-
-  int64_t GetOutput();
-
-  std::vector<int64_t> GetInstructions();
-
-private:
-
-  std::map<int64_t, std::function<int(std::vector<int64_t>&, std::array<Mode, 3>, int64_t)>> operations_;
-  std::vector<int64_t> instructions_;
-  State current_state_;
-  size_t ip_;
-  int64_t current_input_, current_output_;
-  bool received_input_;
-};
-
-Intcode::Impl::Impl() : ip_(0), received_input_(false) {}
+Intcode::Impl::Impl() : instructions_(50000, 0), ip_(0), base_offset_(0), received_input_(false) {}
 
 Intcode::Intcode() : pimpl_(new Impl()) {
   pimpl_->RegisterInstructions();
@@ -86,7 +102,7 @@ void Intcode::SetInstructions(const std::vector<int64_t> &instructions) {
 }
 
 void Intcode::Impl::SetInstructions(const std::vector<int64_t> &instructions) {
-  instructions_ = instructions;
+  std::copy(instructions.begin(), instructions.end(), instructions_.begin());
 }
 
 
@@ -110,7 +126,7 @@ State Intcode::Impl::Run() {
         current_state_ = State::AwaitingInput;
         break;
       }
-      ip_ = operations_[instruction.opcode](instructions_, instruction.modes, ip_);
+      ip_ = operations_[instruction.opcode](instruction.modes, ip_);
       received_input_ = false;
       if (instruction.opcode == HaltOpcode) {
         current_state_ = State::Halted;
@@ -143,35 +159,35 @@ int64_t Intcode::Impl::GetOutput() {
 
 
 void Intcode::Impl::RegisterInstructions() {
-  operations_[99] = [](std::vector<int64_t>&, std::array<Mode, 3>, int64_t ip) -> int64_t {
+  operations_[99] = [](std::array<Mode, 3>, int64_t ip) -> int64_t {
     return ip + 1;
   };
 
-  operations_[1] = [](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
-    auto operands = GetOperands(instructions, modes, ip);
-    instructions[ instructions[ip+3] ] = operands.first + operands.second;
+  operations_[1] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    auto operands = GetOperands(modes, ip);
+    instructions_[ instructions_[ip+3] + GetOffset(modes[2]) ] = operands.first + operands.second;
     return ip + 4;
   };
 
-  operations_[2] = [](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
-    auto operands = GetOperands(instructions, modes, ip);
-    instructions[ instructions[ip+3] ] = operands.first * operands.second;
+  operations_[2] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    auto operands = GetOperands(modes, ip);
+    instructions_[ instructions_[ip+3] + GetOffset(modes[2]) ] = operands.first * operands.second;
     return ip + 4;
   };
 
-  operations_[3] = [this](std::vector<int64_t>& instructions, std::array<Mode, 3> /*modes*/, int64_t ip) -> int64_t {
-    instructions[ instructions[ip+1] ] = current_input_;
+  operations_[3] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    instructions_[ instructions_[ip + 1] + GetOffset(modes[0])] = current_input_;
     return ip + 2;
   };
 
-  operations_[4] = [this](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
-    int64_t value = modes[0] == Mode::Immediate ? instructions[ip+1] : instructions[instructions[ip+1]];
+  operations_[4] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    int64_t value = GetOperand(modes[0], ip+1);
     current_output_ = value;
     return ip + 2;
   };
 
-  operations_[5] = [](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
-    auto operands = GetOperands(instructions, modes, ip);
+  operations_[5] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    auto operands = GetOperands(modes, ip);
     if (operands.first != 0) {
       return operands.second;
     } else {
@@ -179,9 +195,8 @@ void Intcode::Impl::RegisterInstructions() {
     }
   };
 
-
-  operations_[6] = [](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
-    auto operands = GetOperands(instructions, modes, ip);
+  operations_[6] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    auto operands = GetOperands(modes, ip);
     if (operands.first == 0) {
       return operands.second;
     } else {
@@ -189,25 +204,33 @@ void Intcode::Impl::RegisterInstructions() {
     }
   };
 
-  operations_[7] = [](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
-    auto operands = GetOperands(instructions, modes, ip);
+  operations_[7] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    auto operands = GetOperands(modes, ip);
     if (operands.first < operands.second) {
-      instructions[instructions[ip+3]] = 1;
+      instructions_[instructions_[ip+3] + GetOffset(modes[2])] = 1;
     } else {
-      instructions[instructions[ip+3]] = 0;
+      instructions_[instructions_[ip+3] + GetOffset(modes[2])] = 0;
     }
     return ip + 4;
   };
 
-  operations_[8] = [](std::vector<int64_t>& instructions, std::array<Mode, 3> modes, int64_t ip) -> int64_t {
-    auto operands = GetOperands(instructions, modes, ip);
+  operations_[8] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    auto operands = GetOperands(modes, ip);
     if (operands.first == operands.second) {
-      instructions[instructions[ip+3]] = 1;
+      instructions_[instructions_[ip+3] + GetOffset(modes[2])] = 1;
     } else {
-      instructions[instructions[ip+3]] = 0;
+      instructions_[instructions_[ip+3] + GetOffset(modes[2])] = 0;
     }
     return ip + 4;
   };
+
+  operations_[9] = [this](std::array<Mode, 3> modes, int64_t ip) -> int64_t {
+    int64_t operand = GetOperand(modes[0], ip+1);
+    base_offset_ += operand;
+    return ip + 2;
+  };
+
+
 }
 
 }
